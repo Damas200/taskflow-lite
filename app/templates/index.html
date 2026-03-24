@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TaskFlow Lite</title>
+</head>
+<body>
+    <h1>TaskFlow Lite</h1>
+
+    <form id="taskForm">
+        <input type="text" id="title" placeholder="Enter task" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h2>Tasks</h2>
+    <ul id="taskList"></ul>
+
+    <script>
+        const apiUrl = "/tasks";
+
+        async function fetchTasks() {
+            const res = await fetch(apiUrl);
+            const tasks = await res.json();
+
+            const list = document.getElementById("taskList");
+            list.innerHTML = "";
+
+            tasks.forEach(task => {
+                const li = document.createElement("li");
+                li.textContent = `${task.title} - ${task.status}`;
+                list.appendChild(li);
+            });
+        }
+
+        document.getElementById("taskForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById("title").value;
+
+            await fetch(apiUrl, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ title })
+            });
+
+            fetchTasks();
+        });
+
+        fetchTasks();
+    </script>
+</body>
+</html>
